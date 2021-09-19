@@ -17,52 +17,39 @@ export function TaskList() {
   function handleCreateNewTask() {
     // Crie uma nova task com um id random, não permita criar caso o título seja vazio.
     let randomIdTask = Math.floor(Math.random() * 100)
-    if(newTaskTitle !== '') {
-      // Verificando se id ja existe
-      for(let i = 0; i < tasks.length; i++) {
-        if(randomIdTask === tasks[i].id) {
-          randomIdTask = Math.floor(Math.random() * 100)
-        }
-      }
-      const taskValue = {
-        id: randomIdTask,
-        title: newTaskTitle,
-        isComplete: false
-      }
-      setTasks([...tasks, taskValue])
-      localStorage.setItem('tasks', JSON.stringify(tasks))
-    }
-    else {
+    if(!newTaskTitle) {
       alert('Titulos vazios não são permitidos')
+      return
     }
+    // Verificando se id ja existe
+    for(let i = 0; i < tasks.length; i++) {
+      if(randomIdTask === tasks[i].id) {
+        randomIdTask = Math.floor(Math.random() * 100)
+      }
+    }
+    const taskValue = {
+      id: randomIdTask,
+      title: newTaskTitle,
+      isComplete: false
+    }
+    setTasks([...tasks, taskValue])
+    localStorage.setItem('tasks', JSON.stringify(tasks))
   }
 
   function handleToggleTaskCompletion(id: number) {
     // Altere entre `true` ou `false` o campo `isComplete` de uma task com dado ID
-    for(let i = 0; i < tasks.length; i++) {
-      const idTask = tasks[i].id
-      if(id === idTask) {
-        if(tasks[i].isComplete === false) {
-          tasks[i].isComplete = true
-          setTasks([...tasks])
-        }
-        else {
-          tasks[i].isComplete = false
-          setTasks([...tasks])
-        }
-      }
-    }
+    const arrayFiltered = tasks.map(task =>
+      task.id === id ? {
+        ...task,
+        isComplete: !task.isComplete
+      } : task )
+    setTasks(arrayFiltered)
   }
 
   function handleRemoveTask(id: number) {
     // Remova uma task da listagem pelo ID
-    for(let i = 0; i < tasks.length; i++) {
-      const idTask = tasks[i].id
-      if(id === idTask) {
-        tasks.splice(i, 1)
-        setTasks([...tasks])
-      }
-    }
+    const arrayFiltered = tasks.filter(task => task.id !== id)
+    setTasks(arrayFiltered)
   }
 
   return (
